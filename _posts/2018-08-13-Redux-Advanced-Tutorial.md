@@ -137,20 +137,15 @@ This middleware makes the **store.dispatch** method accept a **Promise** object 
 To implement this, **Action Creator** has two methods. For first way, the return value is a Promise object.
 
 ```jsx
-import { createAction } from 'redux-actions';
-
-class AsyncApp extends Component {
-  componentDidMount() {
-    const { dispatch, selectedPost } = this.props
-    // send Synchronize Action
-    dispatch(requestPosts(selectedPost));
-    // send Asynchronize Action
-    dispatch(createAction(
-      'FETCH_POSTS', 
-      fetch(`/some/API/${postTitle}.json`)
-        .then(response => response.json())
-    ));
-  }
+const fetchPosts = 
+  (dispatch, postTitle) => new Promise(function (resolve, reject) {
+     dispatch(requestPosts(postTitle));
+     return fetch(`/some/API/${postTitle}.json`)
+       .then(response => {
+         type: 'FETCH_POSTS',
+         payload: response.json()
+       });
+});
 ```
 
 For the second way:
